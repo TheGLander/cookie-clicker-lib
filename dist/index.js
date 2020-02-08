@@ -4,13 +4,13 @@
 	(global = global || self, factory(global.CCL = {}));
 }(this, (function (exports) { 'use strict';
 
-	var injectCode = function (_a) {
+	function escapeRegExp(str) {
+	    return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+	}
+	function injectCode(_a) {
 	    var func = _a.func, source = _a.source, target = _a.target, where = _a.where;
 	    var newFuncStr = func.toString();
-	    source = source
-	        .split("")
-	        .map(function (val) { return "\\" + val; })
-	        .join("");
+	    source = escapeRegExp(source);
 	    switch (where) {
 	        case "before":
 	            newFuncStr = newFuncStr.replace(new RegExp(source, "g"), "" + target + source);
@@ -27,9 +27,9 @@
 	    var newFunc = new Function("return (" + newFuncStr + ")")();
 	    newFunc.prototype = func.prototype;
 	    return newFunc;
-	};
+	}
+
 	var lol = 6;
-	//# sourceMappingURL=index.js.map
 
 	exports.injectCode = injectCode;
 	exports.lol = lol;
