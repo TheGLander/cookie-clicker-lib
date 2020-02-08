@@ -1,0 +1,39 @@
+{
+	"name": "cookie-clicker-lib",
+	"version": "1.0.0",
+	"description": "The CC library for easier mod making!",
+	"main": "/dist/index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "npx rollup -c",
+		"build:watch": "npm run build -- --watch"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/TheGLander/cookie-clicker-lib.git"
+	},
+	"author": "G lander",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/TheGLander/cookie-clicker-lib/issues"
+	},
+	"homepage": "https://github.com/TheGLander/cookie-clicker-lib#readme",
+	"dependencies": {},
+	"devDependencies": {
+		"@babel/preset-env": "^7.8.3",
+		"@rollup/plugin-commonjs": "^11.0.2",
+		"babel": "^6.23.0",
+		"babel-minify": "^0.5.1",
+		"babel-preset-env": "^1.7.0",
+		"babel-preset-minify": "^0.5.1",
+		"eslint": "^6.8.0",
+		"eslint-config-prettier": "^6.9.0",
+		"prettier": "^1.19.1",
+		"rollup": "^1.29.1",
+		"rollup-plugin-analyzer": "^3.2.2",
+		"rollup-plugin-babel": "^4.3.3",
+		"rollup-plugin-babel-minify": "^9.1.1",
+		"rollup-plugin-typescript2": "^0.25.3",
+		"typescript": "^3.7.5"
+	}
+}
