@@ -115,14 +115,16 @@
         return dummy;
     }
 
-    var _a;
     var lol = 6;
     var custom = {};
-    if (((_a = window.CCL) === null || _a === void 0 ? void 0 : _a.custom) === undefined)
+    if (!window.CCLInit) {
+        window.CCLInit = true;
         custom = main();
+    }
     var master = __assign(__assign({}, custom), { lol: lol,
         injectCode: injectCode });
 
     return master;
 
 })));
+//# sourceMappingURL=index.js.map
