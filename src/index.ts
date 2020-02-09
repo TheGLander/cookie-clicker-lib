@@ -1,18 +1,19 @@
 import { injectCode } from "./helpers"
 import { main } from "./injects"
+import Game from "./gameType"
 declare global {
 	interface Window {
-		Game: any
+		Game: Game
 		CCL: any
 		CCLInit: boolean
 	}
 }
+if (window.CCLInit) throw new Error("Duplicate CCL import")
+
 let lol = 6
 let custom = {}
-if (!window.CCLInit) {
-	window.CCLInit = true
-	custom = main()
-}
+window.CCLInit = true
+custom = main()
 let master = {
 	...custom,
 	lol,

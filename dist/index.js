@@ -38,6 +38,10 @@
             return value();
         return value;
     }
+    /**
+     * This function replaces code in some funcion
+     * @param parameters
+     */
     function injectCode(_a) {
         var func = _a.func, source = _a.source, target = _a.target, where = _a.where;
         var newFuncStr = func.toString();
@@ -49,6 +53,8 @@
         }
         target = getValue(target);
         var findStart = /\)\s+{/;
+        if (!sliceMode && !regex.test(newFuncStr))
+            console.warn("Nothing to inject.");
         switch (where) {
             case "before":
                 if (sliceMode)
@@ -75,6 +81,7 @@
         newFunc.prototype = func.prototype;
         return newFunc;
     }
+    //# sourceMappingURL=helpers.js.map
 
     function main() {
         var Injection = /** @class */ (function () {
@@ -87,6 +94,7 @@
         }());
         var dummy = {};
         var injections = [
+            //Custom menus
             new Injection("customMenu", [], function () {
                 window.Game.UpdateMenu = injectCode({
                     func: window.Game.UpdateMenu,
@@ -97,13 +105,37 @@
             new Injection("customOptionsMenu", []),
             new Injection("customStatsMenu", []),
             new Injection("customInfoMenu", []),
-            new Injection("customInfoMenu", []),
+            //Data manipulation
             new Injection("customLoad", [], function () {
                 window.Game.LoadSave = injectCode({
                     func: window.Game.LoadSave,
                     source: "if (Game.prefs.showBackupWarning==1)",
                     where: "before",
                     target: "\n\t\t\t// CCLib\n\t\t\tfor(const i in CLL.customLoad) CLL.customLoad[i](); ",
+                });
+            }),
+            new Injection("customReset", [], function () {
+                window.Game.Reset = injectCode({
+                    func: window.Game.Reset,
+                    where: "before",
+                    target: "\n\t\t\t// CCLib\n\t\t\tfor(const i in CCL.customReset) CCL.customReset[i](hard);\n\t\t",
+                });
+            }),
+            //Misc
+            new Injection("customBeautify", [], function () {
+                window.Beautify = injectCode({
+                    func: window.Beautify,
+                    source: "return negative?'-'+output:output+decimal;",
+                    target: "// CCLib\n  let ret = negative?'-'+output:output+decimal;\n\tfor(const i in CCL.customBeautify) {\n\t\tlet returnedValue = CCL.customBeautify[i](value, floats)\n\t\tret = returnedValue ? returnedValue : ret\n\t};\n\treturn ret;",
+                    where: "replace",
+                });
+            }),
+            new Injection("undefined", undefined, function () {
+                window.Game.Loader.Load = injectCode({
+                    func: window.Game.Loader.Load,
+                    where: "replace",
+                    source: "img.src=this.domain",
+                    target: "img.src=(assets[i].indexOf('http') !== -1 ? \"\" : this.domain)",
                 });
             }),
         ];
@@ -114,13 +146,14 @@
         });
         return dummy;
     }
+    //# sourceMappingURL=injects.js.map
 
+    if (window.CCLInit)
+        throw new Error("Duplicate CCL import");
     var lol = 6;
     var custom = {};
-    if (!window.CCLInit) {
-        window.CCLInit = true;
-        custom = main();
-    }
+    window.CCLInit = true;
+    custom = main();
     var master = __assign(__assign({}, custom), { lol: lol,
         injectCode: injectCode });
 

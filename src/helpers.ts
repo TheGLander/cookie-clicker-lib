@@ -6,6 +6,10 @@ export function getValue(value: CommonString): string {
 	if (value instanceof Function) return value()
 	return value
 }
+/**
+ * This function replaces code in some funcion
+ * @param parameters
+ */
 export function injectCode({
 	func,
 	source,
@@ -26,7 +30,7 @@ export function injectCode({
 	}
 	target = getValue(target)
 	let findStart = /\)\s+{/
-
+	if (!sliceMode && !regex.test(newFuncStr)) console.warn("Nothing to inject.")
 	switch (where) {
 		case "before":
 			if (sliceMode) newFuncStr = newFuncStr.replace(findStart, `) {${target}`)
