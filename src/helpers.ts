@@ -18,30 +18,27 @@ export function injectCode({
 	where: "before" | "replace" | "after"
 }) {
 	let newFuncStr = func.toString()
-	let sliceMode = source !== undefined
-	if (sliceMode) source = escapeRegExp(getValue(source))
+	let sliceMode = source === undefined
+	let regex: RegExp
+	if (!sliceMode) {
+		source = getValue(source)
+		regex = new RegExp(escapeRegExp(source), "g")
+	}
 	target = getValue(target)
+	let findStart = /\)\s+{/
 
 	switch (where) {
 		case "before":
-			if (sliceMode) newFuncStr = `${target}${newFuncStr}`
-			else
-				newFuncStr = newFuncStr.replace(
-					new RegExp(source, "g"),
-					`${target}${source}`
-				)
+			if (sliceMode) newFuncStr = newFuncStr.replace(findStart, `) {${target}`)
+			else newFuncStr = newFuncStr.replace(regex, `${target}${source}`)
 			break
 		case "replace":
 			if (sliceMode) newFuncStr = `${target}`
-			else newFuncStr = newFuncStr.replace(new RegExp(source, "g"), `${target}`)
+			else newFuncStr = newFuncStr.replace(regex, `${target}`)
 			break
 		case "after":
-			if (sliceMode) newFuncStr = `${newFuncStr}${target}`
-			else
-				newFuncStr = newFuncStr.replace(
-					new RegExp(source, "g"),
-					`${source}${target}`
-				)
+			if (sliceMode) throw new Error("Yikes, can't add to end!")
+			else newFuncStr = newFuncStr.replace(regex, `${source}${target}`)
 			break
 		default:
 			throw new Error('where Parameter must be "before", "replace" or "after"')
