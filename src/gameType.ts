@@ -139,7 +139,22 @@ export default interface Game {
 	bakeryNameRefresh: Function
 	bakeryNamePrompt: Function
 	bakeryNamePromptRandom: Function
-	tooltip: object
+	tooltip: {
+		text: Function
+		x: number
+		y: number
+		origin: string
+		on: number
+		tt: object
+		tta: object
+		shouldHide: number
+		dynamic: number
+		from: object
+		draw: Function
+		update: Function
+		hide: Function
+		wobble: Function
+	}
 	getTooltip: Function
 	getDynamicTooltip: Function
 	attachTooltip: Function
