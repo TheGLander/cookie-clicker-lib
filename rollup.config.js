@@ -2,7 +2,6 @@ import babel from "rollup-plugin-babel"
 import analyze from "rollup-plugin-analyzer"
 import minify from "rollup-plugin-babel-minify"
 import typescript from "rollup-plugin-typescript2"
-import commonjs from "@rollup/plugin-commonjs"
 let production = false
 //import banner from "rollup-plugin-banner"
 export default {
@@ -11,15 +10,16 @@ export default {
 		name: "CCL",
 		file: "./dist/index.js",
 		format: "umd",
+		sourcemap: true,
 	},
 	plugins: [
-		commonjs({}),
 		typescript({
 			tsconfig: "./tsconfig.json",
 		}),
 
 		babel({
 			exclude: "node_modules/**",
+			sourceMaps: true,
 		}),
 		analyze({
 			summaryOnly: true,
@@ -27,6 +27,7 @@ export default {
 		production
 			? minify({
 					comments: false,
+					sourcemap: true,
 			  })
 			: undefined,
 		//banner("Zuckor <%= pkg.version %> - <%= pkg.author %>")
