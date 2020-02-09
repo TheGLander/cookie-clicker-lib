@@ -73,27 +73,45 @@ export function main() {
 				target: `// CCLib
   let ret = negative?'-'+output:output+decimal;
 	for(const i in CCL.customBeautify) {
-		let returnedValue = CCL.customBeautify[i](value, floats)
+		let returnedValue = CCL.customBeautify[i](value, floats, ret)
 		ret = returnedValue ? returnedValue : ret
 	};
 	return ret;`,
 				where: "replace",
 			})
 		}),
-
-		new Injection("undefined", undefined, () => {
-			window.Game.Loader.Load = injectCode({
-				func: window.Game.Loader.Load,
-				where: "replace",
-				source: "img.src=this.domain",
-				target:
-					"img.src=(assets[i].indexOf('http') !== -1 ? \"\" : this.domain)",
+		//Tooltips
+		new Injection("customTooltipDraw", [], () => {
+			window.Game.tooltip.draw = injectCode({
+				func: window.Game.tooltip.draw,
+				where: "before",
+				target: `
+			// CCLib
+			for(const i in CCL.customTooltipDraw) CLL.customTooltipDraw[i](from, text, origin);
+		`,
+			})
+		}),
+		new Injection("customTooltipUpdate", [], () => {
+			window.Game.tooltip.update = injectCode({
+				func: window.Game.tooltip.update,
+				where: "before",
+				target: `
+			// CCLib
+			for(const i in CCL.customTooltipUpdate) CLL.customTooltipUpdate[i]();
+		`,
 			})
 		}),
 	]
 	injections.forEach(inject => {
 		dummy[inject.value] = inject.defValue
 		if (inject.func) inject.func()
+	})
+	//Misc stuff
+	window.Game.Loader.Load = injectCode({
+		func: window.Game.Loader.Load,
+		where: "replace",
+		source: "img.src=this.domain",
+		target: "img.src=(assets[i].indexOf('http') !== -1 ? \"\" : this.domain)",
 	})
 	return dummy
 }

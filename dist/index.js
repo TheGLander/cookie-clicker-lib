@@ -126,16 +126,23 @@
                 window.Beautify = injectCode({
                     func: window.Beautify,
                     source: "return negative?'-'+output:output+decimal;",
-                    target: "// CCLib\n  let ret = negative?'-'+output:output+decimal;\n\tfor(const i in CCL.customBeautify) {\n\t\tlet returnedValue = CCL.customBeautify[i](value, floats)\n\t\tret = returnedValue ? returnedValue : ret\n\t};\n\treturn ret;",
+                    target: "// CCLib\n  let ret = negative?'-'+output:output+decimal;\n\tfor(const i in CCL.customBeautify) {\n\t\tlet returnedValue = CCL.customBeautify[i](value, floats, ret)\n\t\tret = returnedValue ? returnedValue : ret\n\t};\n\treturn ret;",
                     where: "replace",
                 });
             }),
-            new Injection("undefined", undefined, function () {
-                window.Game.Loader.Load = injectCode({
-                    func: window.Game.Loader.Load,
-                    where: "replace",
-                    source: "img.src=this.domain",
-                    target: "img.src=(assets[i].indexOf('http') !== -1 ? \"\" : this.domain)",
+            //Tooltips
+            new Injection("customTooltipDraw", [], function () {
+                window.Game.tooltip.draw = injectCode({
+                    func: window.Game.tooltip.draw,
+                    where: "before",
+                    target: "\n\t\t\t// CCLib\n\t\t\tfor(const i in CCL.customTooltipDraw) CLL.customTooltipDraw[i](from, text, origin);\n\t\t",
+                });
+            }),
+            new Injection("customTooltipUpdate", [], function () {
+                window.Game.tooltip.update = injectCode({
+                    func: window.Game.tooltip.update,
+                    where: "before",
+                    target: "\n\t\t\t// CCLib\n\t\t\tfor(const i in CCL.customTooltipUpdate) CLL.customTooltipUpdate[i]();\n\t\t",
                 });
             }),
         ];
@@ -144,9 +151,15 @@
             if (inject.func)
                 inject.func();
         });
+        //Misc stuff
+        window.Game.Loader.Load = injectCode({
+            func: window.Game.Loader.Load,
+            where: "replace",
+            source: "img.src=this.domain",
+            target: "img.src=(assets[i].indexOf('http') !== -1 ? \"\" : this.domain)",
+        });
         return dummy;
     }
-    //# sourceMappingURL=injects.js.map
 
     if (window.CCLInit)
         throw new Error("Duplicate CCL import");
